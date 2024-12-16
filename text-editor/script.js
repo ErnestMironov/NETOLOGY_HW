@@ -14,16 +14,26 @@ editor.addEventListener('input', () => {
   localStorage.setItem('editorContent', editor.innerHTML);
 });
 
-boldBtn.addEventListener('click', () => {
-  document.execCommand('bold', false, null);
-  boldBtn.classList.toggle('active');
+const formatText = (format) => {
+  const selection = window.getSelection();
+  if (!selection.rangeCount) return;
+
+  const range = selection.getRangeAt(0);
+  const span = document.createElement('span');
+  span.style[format === 'bold' ? 'fontWeight' : 'fontStyle'] = format === 'bold' ? 'bold' : 'italic';
+
+  range.surroundContents(span);
   editor.focus();
+};
+
+boldBtn.addEventListener('click', () => {
+  formatText('bold');
+  boldBtn.classList.toggle('active');
 });
 
 italicBtn.addEventListener('click', () => {
-  document.execCommand('italic', false, null);
+  formatText('italic');
   italicBtn.classList.toggle('active');
-  editor.focus();
 });
 
 clearBtn.addEventListener('click', () => {
