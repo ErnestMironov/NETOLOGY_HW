@@ -1,4 +1,18 @@
 document.addEventListener('DOMContentLoaded', () => {
+  const TOOLTIP_CONFIG = {
+    spacing: {
+      gap: 5,
+      viewportPadding: 5,
+    },
+    positions: {
+      top: 'top',
+      bottom: 'bottom',
+      left: 'left',
+      right: 'right'
+    },
+    defaultPosition: 'top'
+  };
+
   const container = document.querySelector('.container');
   const tooltip = document.querySelector('.tooltip');
   let currentTooltip = null;
@@ -11,9 +25,8 @@ document.addEventListener('DOMContentLoaded', () => {
     event.preventDefault();
 
     const tooltipText = target.getAttribute('title');
-    const position = target.dataset.position || 'top';
+    const position = target.dataset.position || TOOLTIP_CONFIG.defaultPosition;
 
-    // If clicking the same tooltip, just toggle it
     if (currentTooltip === target) {
       tooltip.classList.toggle('tooltip_active');
       if (!tooltip.classList.contains('tooltip_active')) {
@@ -22,7 +35,6 @@ document.addEventListener('DOMContentLoaded', () => {
       return;
     }
 
-    // Set new tooltip content and show it
     tooltip.textContent = tooltipText;
     tooltip.classList.add('tooltip_active');
     currentTooltip = target;
@@ -33,27 +45,28 @@ document.addEventListener('DOMContentLoaded', () => {
     let left, top;
 
     switch (position) {
-      case 'bottom':
+      case TOOLTIP_CONFIG.positions.bottom:
         left = targetRect.left + (targetRect.width - tooltipRect.width) / 2;
-        top = targetRect.bottom + 5;
+        top = targetRect.bottom + TOOLTIP_CONFIG.spacing.gap;
         break;
-      case 'left':
-        left = targetRect.left - tooltipRect.width - 5;
+      case TOOLTIP_CONFIG.positions.left:
+        left = targetRect.left - tooltipRect.width - TOOLTIP_CONFIG.spacing.gap;
         top = targetRect.top + (targetRect.height - tooltipRect.height) / 2;
         break;
-      case 'right':
-        left = targetRect.right + 5;
+      case TOOLTIP_CONFIG.positions.right:
+        left = targetRect.right + TOOLTIP_CONFIG.spacing.gap;
         top = targetRect.top + (targetRect.height - tooltipRect.height) / 2;
         break;
-      case 'top':
+      case TOOLTIP_CONFIG.positions.top:
       default:
         left = targetRect.left + (targetRect.width - tooltipRect.width) / 2;
-        top = targetRect.top - tooltipRect.height - 5;
+        top = targetRect.top - tooltipRect.height - TOOLTIP_CONFIG.spacing.gap;
         break;
     }
 
-    left = Math.max(5, Math.min(left, window.innerWidth - tooltipRect.width - 5));
-    top = Math.max(5, Math.min(top, window.innerHeight - tooltipRect.height - 5));
+    const { viewportPadding } = TOOLTIP_CONFIG.spacing;
+    left = Math.max(viewportPadding, Math.min(left, window.innerWidth - tooltipRect.width - viewportPadding));
+    top = Math.max(viewportPadding, Math.min(top, window.innerHeight - tooltipRect.height - viewportPadding));
 
     tooltip.style.left = `${left}px`;
     tooltip.style.top = `${top}px`;
